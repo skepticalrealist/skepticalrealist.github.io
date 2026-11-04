@@ -118,3 +118,28 @@ body{font-family:Georgia,'Times New Roman',serif;font-size:11px;line-height:1.48
 
 
 .about-contact{border:1px solid var(--line,#999);padding:12px;margin:16px 0;text-align:center}.about-contact h3{margin:0 0 8px;font-size:.85rem;letter-spacing:.08em}.about-contact a{display:inline-block;color:inherit;text-decoration:underline;text-underline-offset:3px;font-size:.9rem}
+
+/* Compact scrollable title archives */
+.log-list{max-height:190px;overflow-y:auto;overscroll-behavior:contain;padding-right:7px}
+.log-list li{padding:2px 0}
+.log-list a,.title-entry a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:2px}
+.log-list a:hover,.title-entry a:hover{color:var(--accent)}
+.category-posts{display:block;max-height:260px;overflow-y:auto;overscroll-behavior:contain;border:1px solid var(--line);margin:7px;padding:4px 9px}
+.title-entry{display:flex;gap:10px;align-items:baseline;padding:5px 2px;border-bottom:1px dotted var(--line);font:11px/1.45 Georgia,serif}
+.title-entry time{flex:0 0 78px;color:var(--muted);font:9px Georgia,serif}
+.single-post-page{max-width:850px;margin:10px auto;padding:8px}
+.single-post-page article{border:1px solid var(--line);padding:10px;background:rgba(255,255,255,.12)}
+.single-post-meta{font:9px Georgia,serif;color:var(--muted)}
+.single-post-page h1{font:normal 21px/1.3 Georgia,serif;margin:7px 0 15px}
+.single-post-body{font:12px/1.75 Georgia,serif;overflow-wrap:anywhere}
+.single-post-body p{margin:0 0 13px}
+.single-post-body h2{font:normal 16px Georgia,serif;margin:20px 0 7px;border-bottom:1px solid var(--line);padding-bottom:3px}
+.single-post-body h3{font:normal 14px Georgia,serif;margin:16px 0 6px}
+.single-post-body strong{font-weight:bold}
+.single-post-body ul,.single-post-body ol{padding-left:22px;margin:5px 0 13px}
+.single-post-body a{color:inherit;text-decoration:underline}
+.single-post-body code{font:11px monospace;background:var(--soft);padding:1px 3px}
+.single-post-images{display:grid;grid-template-columns:1fr;gap:9px;margin:16px 0}
+.single-post-images img{display:block;max-width:100%;height:auto;border:1px solid var(--line)}
+.single-post-tags{font:10px Georgia,serif;color:var(--muted);margin-top:15px}
+@media(max-width:560px){.single-post-page{padding:5px}.single-post-page article{padding:8px}.single-post-page h1{font-size:18px}.title-entry{font-size:10px}}
