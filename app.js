@@ -16,7 +16,7 @@ const thoughts=[
   'There is a difference between something we have not discovered and something we do not even know we should be looking for. The latter is considerably harder to account for.'
 ];$('newThought').addEventListener('click',()=>{const choices=thoughts.filter(t=>t!==$('randomThought').textContent);$('randomThought').textContent=choices[Math.floor(Math.random()*choices.length)]});
 function calendar(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),first=new Date(y,m,1).getDay(),count=new Date(y,m+1,0).getDate();$('calendarTitle').textContent=new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(n);$('calendarGrid').innerHTML=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<span class="weekday">${x}</span>`).join('')+Array(first).fill('<span></span>').join('')+Array.from({length:count},(_,i)=>`<span class="${i+1===n.getDate()?'today':''}">${i+1}</span>`).join('')}
-function clock(){$('siteClock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})}clock();setInterval(clock,30000);calendar();
+function clock(){$('siteClock').textContent=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}clock();setInterval(clock,1000);calendar();
 // Token exists only in JS memory for this page session.
 function status(s){$('ownerStatus').textContent=s}
 if(new URLSearchParams(location.search).get('author')==='1')$('ownerPanel').hidden=false;
