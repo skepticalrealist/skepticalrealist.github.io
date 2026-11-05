@@ -41,7 +41,7 @@ $('inlineImageInput').addEventListener('change',async()=>{
   const path=`assets/posts/${Date.now()}-inline-${safe}`;
   await putFile(path,await fileToBase64(file),'Upload inline review image');
   const area=$('entryBody'),alt=file.name.replace(/[\[\]]/g,'');
-  const marker=`\\n\\n![${alt}](${path})\\n\\n`;
+  const marker=`\n\n![${alt}](${path})\n\n`;
   const start=inlineImageRange.start,end=inlineImageRange.end;
   area.value=area.value.slice(0,start)+marker+area.value.slice(end);
   const cursor=start+marker.length;area.focus();area.setSelectionRange(cursor,cursor);
