@@ -27,6 +27,28 @@ $('lockOwner').addEventListener('click',()=>{token='';$('ownerEditor').hidden=tr
 async function api(path,method,body){const r=await fetch('https://api.github.com/repos/'+OWNER+'/'+REPO+'/contents/'+path,{method,headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});const d=await r.json();if(!r.ok)throw Error(d.message||('GitHub API error '+r.status));return d}
 async function putFile(path,content,message){let sha;try{const old=await api(path,'GET');sha=old.sha}catch(e){if(!String(e.message).includes('Not Found'))throw e}return api(path,'PUT',{message,content,branch:'main',...(sha?{sha}:{})})}
 function fileToBase64(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]);r.onerror=reject;r.readAsDataURL(file)})}
+let inlineImageRange={start:0,end:0};
+$('insertImageButton').addEventListener('click',()=>{
+ if(!token){status('Unlock publishing before inserting an image.');return}
+ const area=$('entryBody');inlineImageRange={start:area.selectionStart,end:area.selectionEnd};
+ $('inlineImageInput').click();
+});
+$('inlineImageInput').addEventListener('change',async()=>{
+ const file=$('inlineImageInput').files[0];if(!file)return;
+ const button=$('insertImageButton');button.disabled=true;
+ try{
+  const safe=file.name.toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/^-+|-+$/g,'')||'image';
+  const path=`assets/posts/${Date.now()}-inline-${safe}`;
+  await putFile(path,await fileToBase64(file),'Upload inline review image');
+  const area=$('entryBody'),alt=file.name.replace(/[\[\]]/g,'');
+  const marker=`\\n\\n![${alt}](${path})\\n\\n`;
+  const start=inlineImageRange.start,end=inlineImageRange.end;
+  area.value=area.value.slice(0,start)+marker+area.value.slice(end);
+  const cursor=start+marker.length;area.focus();area.setSelectionRange(cursor,cursor);
+  status('Image uploaded and inserted at the cursor. It will appear here in the published review.');
+ }catch(err){status('Image upload failed: '+err.message)}
+ finally{button.disabled=false;$('inlineImageInput').value=''}
+});
 $('publishForm').addEventListener('submit',async e=>{e.preventDefault();if(!token){status('Unlock publishing first.');return}const btn=$('publishButton');btn.disabled=true;try{const title=$('entryTitle').value.trim(),category=$('entryCategory').value,tags=$('entryTags').value.split(',').map(x=>x.trim()).filter(Boolean),body=$('entryBody').value.trim(),files=[...$('entryImages').files];const now=new Date(),date=now.toISOString().slice(0,10),stamp=now.toISOString();let data=await fetch('./posts.json?v='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('Could not read posts.json');return r.json()});if(Array.isArray(data))data={posts:data,history:[]};if(!Array.isArray(data.posts))data.posts=[];if(!Array.isArray(data.history))data.history=[];const images=[];for(let i=0;i<files.length;i++){const f=files[i],safe=f.name.toLowerCase().replace(/[^a-z0-9._-]+/g,'-').replace(/^-+|-+$/g,'')||'image';const path=`assets/posts/${Date.now()}-${i}-${safe}`;await putFile(path,await fileToBase64(f),`Upload image for ${title}`);images.push(path)}const post={id:'post-'+Date.now(),title,category,tags,body,date,createdAt:stamp,images,...(category==='films'&&$('entryFormat')?{format:$('entryFormat').value}:{})};data.posts.push(post);data.history.push({at:stamp,text:'Published: '+title,action:'publish',postId:post.id});const json=JSON.stringify(data,null,2);await putFile('posts.json',btoa(unescape(encodeURIComponent(json))),'Publish: '+title);status('Published successfully. Refreshing public archive…');$('publishForm').reset();await loadPublic()}catch(err){status('Publishing failed: '+err.message+' — check token permissions and repository branch.')}finally{btn.disabled=false}});
 loadPublic();
 })();
